@@ -33,7 +33,6 @@ import kmxTools
 import pickle
 import html2text
 
-
 class iconSetup():
     
     def __init__(self, parent, isRCBased=1, iconBasePath='', iconPrefix=':/fatcow/32x32/'):
@@ -51,14 +50,21 @@ class iconSetup():
             ret = self.iconPrefix + iconName
         else:
             ret = self.iconBasePath + iconName
+        print('Settign icon:' + ret)
         return ret
     
     def setIcon(self, item, iconName, size=32):
         itemType = type(item)
-        icon = self._getIcon(iconName, size)        
+        
+        icon = self._getIcon(iconName, size) 
+               
         if itemType == type(QtWidgets.QAction(None)):
             item.setIcon(icon)
             #item.setIconSize(self.getSize(size))
+        elif itemType == type(QtWidgets.QTreeWidgetItem(None)):
+            item.setIcon(icon)
+            #item.setIconSize(self.getSize(size))
+            
     def getIcon(self,iconName,size=32):
         return self._getIcon(iconName, size)
     
@@ -77,61 +83,40 @@ class iconSetup():
             icon.addPixmap(pixMap, QtGui.QIcon.Normal, QtGui.QIcon.Off)
             return icon
         return None
+
+#ICON LINK#
+#https://dev.vizuina.com/farmfresh/
     
 class CommonTools(object):
     '''
     classdocs
     '''
-    def __init__(self, parentWindow, iconPath=None):
+    def __init__(self, parentWindow, iconPath=':/fatcow/32x32/'):
         '''
         Constructor
         '''
         self.CallingUI = parentWindow
         self.IconPath = iconPath
-        self.defaultIcon = "NoIcon.png"
-        self.infoStyle = kmxTools.infoStyle()
-        self.ttls = kmxTools.Tools(self.infoStyle)
-        if self.IconPath is None:
-            self.cfg = kmxINIConfigReadWrite.INIConfig("config.ini", writeOk=False)
-            if(self.cfg.iniReady):
-                self.iconPath = self.cfg.getOption('UserInterface', 'IconPath')
-            else:
-                self.IconPath = "../icons/"
+        self.defaultIcon = "document_empty.png"
+        self.ttls = kmxTools.Tools()
 
     def html2Text(self, data):
         h = html2text.HTML2Text()
-        #h.ignore_links = True
         return h.handle(data)
-        
-    
-    def setIconByObj(self, itm2Icon):
-        # print (itm2Icon.__name__)
-        pass
 
-    def getIconString(self, iconName='NoIcon.png', alternateIcon='NoIcon.png'):
+    def getIconString(self, iconName='document_empty.png', alternateIcon='document_empty.png'):
         """
         Returns the path of ICONNAME found on 'iconPath'. Else
         """
-        try:
-            if os.path.exists(self.IconPath + '/' + iconName) and os.path.isfile(self.IconPath + '/' + iconName):
-                return self.IconPath + '/' + iconName
-            elif os.path.exists(self.IconPath + '/' + alternateIcon) and os.path.isfile(self.IconPath + '/' + alternateIcon):
-                return self.IconPath + '/' + alternateIcon
-            elif os.path.exists(self.IconPath + '/' + self.DefaultIcon) and os.path.isfile(self.IconPath + '/' + self.DefaultIcon):
-                return self.IconPath + '/' + self.DefaultIcon
-            else:
-                print ("Error! No Icon found for: " + iconName)
-                return None
-        except:
-            print ("Error! No Icon found for: " + iconName)
-            return None
-
-    def getIcon(self, iconName, alternate='', random=False):
+        
+        if(iconName):
+            return self.IconPath + iconName
+        else:
+            return self.IconPath + alternateIcon
+        
+    def getIcon(self, iconName, alternate=''):
             icon = QtGui.QIcon()
             pxmap = None
-
-            if(random):
-                iconName = "/04/16/" + str(self.ttls.getRandom(50, 10)) + ".png"
 
             if alternate:
                 iconString = self.getIconString(iconName, alternate)
@@ -146,7 +131,7 @@ class CommonTools(object):
 
             return icon
 
-    def setIconForItem(self, item, iconName, isWindow=0, Col=0, comboBoxIndex=0, OptionalIcon='', thisImage='', clear=0, random=False):
+    def setIconForItem(self, item, iconName, isWindow=0, Col=0, comboBoxIndex=0, OptionalIcon='', thisImage='', clear=0):
         itemType = type(item)
         # print itemType
         icon = QtGui.QIcon()
@@ -157,7 +142,7 @@ class CommonTools(object):
                     icon.addPixmap(QtGui.QPixmap(thisImage), QtGui.QIcon.Normal, QtGui.QIcon.On)
                     pxmap = QtGui.QPixmap(thisImage)
         else:
-            icon = self.getIcon(iconName, OptionalIcon, random)
+            icon = self.getIcon(iconName, OptionalIcon)
 
         if clear:
                 icon = QtGui.QIcon()
