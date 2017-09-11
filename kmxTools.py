@@ -52,15 +52,29 @@ import getpass
 import logging as log
 import uuid
 from uuid import getnode as get_mac
+import traceback
 
+#Include below point in your main and errors will be displayed.
+#sys.excepthook = kmxTools.errorHandler
 
-class infoStyle(object):
-    errorLevel = 2  # -1-No Print, 0-Simple Message, 1-Calling Fn + Message, 2-Complete Info (Complete Path+Message)
-    infoLevel = 2  # -1-No Print, 0-Simple Message, 1-Calling Fn + Message, 2-Complete Info (Complete Path+Message)
-
-    def __init__(self):
-        pass
-
+def errorHandler(excType, excValue, tracebackobj):
+    """
+    Global function to catch unhandled exceptions.
+    
+    @param excType exception type
+    @param excValue exception value
+    @param tracebackobj traceback object
+    """    
+    
+    info = traceback.format_exc()
+    print(info)
+    try:
+        f = open('error.log', "w")
+        f.write(info)
+        f.close()
+    except IOError:
+        pass    
+    
 class Tools(object):
     '''
     classdocs
@@ -95,7 +109,7 @@ class Tools(object):
     def getUUID(self):
         return str(uuid.getnode())       
     
-    def errorInfo(self):
+    def errorInfoOld(self):
         TrackStack = sys.exc_info()[2]
         ErrorReport = []
         while TrackStack:
@@ -112,6 +126,10 @@ class Tools(object):
 
         print(ErrorInfo)
         return None        
+
+    def errorInfo(self):
+        info = traceback.format_exc()
+        print(info)        
 
     def printObjInfos(self, obj):
         lst = self.getObjInfos(obj)

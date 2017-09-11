@@ -26,12 +26,18 @@ from kmxPyQt import kmxQtCommonTools
 
 import os
 
-from PyQt5 import QtCore, QtGui, QtWidgets, Qt
+from PyQt5.QtCore import (QFile, QFileInfo, QPoint, QSettings, QSignalMapper, QSize, QTextStream, )
+from PyQt5.QtWidgets import (QAction, QApplication, QFileDialog, QMainWindow, QMdiArea, QMessageBox, QTextEdit, QWidget, QSizePolicy)
+from PyQt5.QtGui import (QIcon, QKeySequence, QFont, QColor)
+from PyQt5.Qsci import (QsciScintilla, QsciLexerPython, QsciAPIs)
+from PyQt5 import QtCore, QtGui, Qsci, QtWidgets,  Qt
+from PyQt5.uic import loadUi
 
 import kmxINIConfigReadWrite
 import kmxTools
 import pickle
 import html2text
+import functools
 
 class iconSetup():
     
@@ -311,6 +317,16 @@ class CommonTools(object):
             return data['mylist']
         return None
 
+    def createAction(self, name, description=None, icon=None, checkable=False, checked=False, fn=None):
+        if(icon):
+            itm = QAction(self.getIcon(icon), name, self, statusTip=description, triggered=fn)
+        else:
+            itm = QAction(name, self, statusTip=description, triggered=fn) 
+
+        itm.setCheckable(checkable)
+        itm.setChecked(checked)
+        return itm  
+
     def popUpMenu(self, menuRequestingtObject, PopupPoint, menuListString, funcToInvoke, additionalArguments='', iconList = []):
 
         """
@@ -338,19 +354,14 @@ class CommonTools(object):
         if menuListString == []:
             return 0;
         Rmnu = QtWidgets.QMenu(self.CallingUI)
+        lst = []
         for i, itm in enumerate(menuListString):
-
             newmenuitem = QtWidgets.QAction(itm, self.CallingUI)
-            #newmenuitem
-
+            lst.append(newmenuitem)
             if len(itm)>1 and itm[0]=='|':
                 itm = itm[1:len(itm)]
                 newmenuitem.setEnabled(False)
                 newmenuitem.setText(itm)
-                #var = QtCore.QVariant()
-
-
-
             if itm != '':
                 if len(iconList)>1 and len(iconList)>i:
                     if iconList[i]!=None:
@@ -358,21 +369,19 @@ class CommonTools(object):
                         icon.addPixmap(QtGui.QPixmap(iconList[i]), QtGui.QIcon.Normal, QtGui.QIcon.On)
                         newmenuitem.setIcon(icon)
 
-            #self.CallingUI.connect(newmenuitem, QtCore.SIGNAL("triggered()"), lambda passarg=(itm,i,additionalArguments,newmenuitem): funcToInvoke(passarg))
-            newmenuitem.triggered.connect(lambda passarg=([itm,i,additionalArguments,newmenuitem]): funcToInvoke(passarg))
+            arg = [itm,i,newmenuitem,additionalArguments]
+            newmenuitem.triggered.connect(functools.partial(funcToInvoke, arg))
             newmenuitem.setData(PopupPoint)
-
             if itm=='':
                 Rmnu.addSeparator()
             else:
                 Rmnu.addAction(newmenuitem)
 
-
         PopupPoint.setY(PopupPoint.y())
         PopupPoint.setX(PopupPoint.x())
         Rmnu.exec_(menuRequestingtObject.mapToGlobal(PopupPoint))
         del(Rmnu)
-
+        
 
 
     def popUpMenuAdv(self, MenuList, MenuRequestingObject, MenuStartPoint, FunctionToBeInvoked, AdditionalArgument=[], popupOffset=QtCore.QPoint(0,0)):
