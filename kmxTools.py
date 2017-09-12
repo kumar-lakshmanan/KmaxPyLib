@@ -53,6 +53,7 @@ import logging as log
 import uuid
 from uuid import getnode as get_mac
 import traceback
+import subprocess
 
 #Include below point in your main and errors will be displayed.
 #sys.excepthook = kmxTools.errorHandler
@@ -82,10 +83,13 @@ class Tools(object):
     def __init__(self):
         '''
         Constructor
-
         '''
         self.randomSeed = 50
         self.rand = random.Random(self.randomSeed)
+        
+    def shellExecute(self, command):
+        #This will chock and execute
+        subprocess.call(command)              
     
     def raiseError(self, msg='CustomError'):
         raise Exception(msg)
@@ -322,7 +326,6 @@ class Tools(object):
         else:
             log.error ("Error! File doesn't exist " + file)
         return x
-
 
     def smart_bool(self, s):
         if s is True or s is False:

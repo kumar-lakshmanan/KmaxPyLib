@@ -39,57 +39,6 @@ import pickle
 import html2text
 import functools
 
-class iconSetup():
-    
-    def __init__(self, parent, isRCBased=1, iconBasePath='', iconPrefix=':/fatcow/32x32/'):
-        '''
-        iconStyle = 1 - Imported RC based icons
-        iconStyle = 0 - Absolute Path based icons        
-        '''
-        self.parent = parent
-        self.isRCBased = isRCBased
-        self.iconBasePath = iconBasePath
-        self.iconPrefix = iconPrefix
-        
-    def getIconString(self, iconName):
-        if self.isRCBased:
-            ret = self.iconPrefix + iconName
-        else:
-            ret = self.iconBasePath + iconName
-        print('Settign icon:' + ret)
-        return ret
-    
-    def setIcon(self, item, iconName, size=32):
-        itemType = type(item)
-        
-        icon = self._getIcon(iconName, size) 
-               
-        if itemType == type(QtWidgets.QAction(None)):
-            item.setIcon(icon)
-            #item.setIconSize(self.getSize(size))
-        elif itemType == type(QtWidgets.QTreeWidgetItem(None)):
-            item.setIcon(icon)
-            #item.setIconSize(self.getSize(size))
-            
-    def getIcon(self,iconName,size=32):
-        return self._getIcon(iconName, size)
-    
-    def getSize(self, size):
-        if(size==16):
-            return QtCore.QSize(16, 16) 
-        if(size==32):
-            return QtCore.QSize(32, 32)    
-
-    def _getIcon(self, iconName, size=16):
-        if (iconName):
-            icon = QtGui.QIcon()
-            pixMap = QtGui.QPixmap(self.getIconString(iconName))
-            s = self.getSize(size)
-            pixMap.scaled(s)        
-            icon.addPixmap(pixMap, QtGui.QIcon.Normal, QtGui.QIcon.Off)
-            return icon
-        return None
-
 #ICON LINK#
 #https://dev.vizuina.com/farmfresh/
     
@@ -109,6 +58,10 @@ class CommonTools(object):
     def html2Text(self, data):
         h = html2text.HTML2Text()
         return h.handle(data)
+    
+    def shellExecute(self,command):
+        QtWidgets.QApplication.processEvents()  
+        self.ttls.shellExecute(command)              
 
     def getIconString(self, iconName='document_empty.png', alternateIcon='document_empty.png'):
         """
@@ -188,21 +141,6 @@ class CommonTools(object):
         if itemType == type(QtWidgets.QComboBox()):
             item.setItemIcon (comboBoxIndex, icon)
 
-
-    def getValue(self, control):
-        val = ""
-        if (type(control) == QtWidgets.QLineEdit):
-            val = control.text()
-        elif (type(control) == QtWidgets.QLabel):
-            val = control.text()
-        return str(val)
-
-    def setValue(self, control, value):
-        if (type(control) == QtWidgets.QLineEdit):
-            control.setText(str(value))
-        elif (type(control) == QtWidgets.QLabel):
-            control.setText(str(value))
-
     def applyStyle(self, style='Fusion'):
         # ['Windows', 'WindowsXP', 'WindowsVista', 'Fusion']
         # Use this ... getStyleList()
@@ -211,13 +149,6 @@ class CommonTools(object):
 
     def getStyleList(self):
         return QtWidgets.QStyleFactory.keys()
-
-    def showInputBox(self, Title='Information', Message='Information', DefaultValue=''):
-        comments, ok = QtWidgets.QInputDialog.getText(self.CallingUI, str(Title), str(Message), QtWidgets.QLineEdit.Normal, DefaultValue)
-        if ok:
-            return comments
-        else:
-            return ''
 
     def getFile(self, Title='Select a file to open...', FileName='Select File', FileType='All Files (*);;Excel Files (*.xls);;Text Files (*.txt)'):
         fileName = QtWidgets.QFileDialog.getOpenFileName(self.CallingUI, str(Title), FileName, str(FileType))
@@ -233,6 +164,13 @@ class CommonTools(object):
         folder = QtWidgets.QFileDialog.getExistingDirectory(self.CallingUI, str(Title))
         if(folder == ""): return ""
         return folder
+
+    def showInputBox(self, Title='Information', Message='Information', DefaultValue=''):
+        comments, ok = QtWidgets.QInputDialog.getText(self.CallingUI, str(Title), str(Message), QtWidgets.QLineEdit.Normal, DefaultValue)
+        if ok:
+            return comments
+        else:
+            return ''
 
     def showYesNoBox(self, Title='Information', Message='Information'):
         ret = QtWidgets.QMessageBox.question(self.CallingUI, Title, Message, QtWidgets.QMessageBox.Yes, QtWidgets.QMessageBox.No)
@@ -284,7 +222,6 @@ class CommonTools(object):
         
         with open(layoutFile, 'wb') as handle:
             pickle.dump(data, handle)
-
 
     def uiLayoutRestore(self,layoutFile='layout.lyt',additionalObjToRestoreStates=None):
         if os.path.exists(layoutFile):
@@ -381,9 +318,7 @@ class CommonTools(object):
         PopupPoint.setX(PopupPoint.x())
         Rmnu.exec_(menuRequestingtObject.mapToGlobal(PopupPoint))
         del(Rmnu)
-        
-
-
+    
     def popUpMenuAdv(self, MenuList, MenuRequestingObject, MenuStartPoint, FunctionToBeInvoked, AdditionalArgument=[], popupOffset=QtCore.QPoint(0,0)):
 
         """
