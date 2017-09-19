@@ -44,9 +44,9 @@ class MenuBuilder(object):
 
     def updateMenu(self, parentWindow, menu, itemName, fnToCall=None):
         if(itemName == '|'): 
-            menu.addSeparator()
+            return menu.addSeparator()
         else:
-            self.createMenuItem(parentWindow, menu, itemName, fnToCall)                    
+            return self.createMenuItem(parentWindow, menu, itemName, fnToCall)                    
                     
                     
             

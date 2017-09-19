@@ -54,7 +54,26 @@ class CommonTools(object):
         self.IconPath = iconPath
         self.defaultIcon = "document_empty.png"
         self.ttls = kmxTools.Tools()
-
+    
+    def createVerticalWindow(self, parent, buttons=['Button1','Button2','|','Button3']):
+        mainWin = QtWidgets.QMainWindow(parent)
+        win = QtWidgets.QWidget(mainWin)
+        layout = QtWidgets.QVBoxLayout(win)
+        btnList = []
+        if(len(buttons)>0):            
+            for eachButton in buttons:
+                if(eachButton=='|'):
+                    layout.addStretch()
+                else:
+                    btn = QtWidgets.QPushButton(win)
+                    btn.setText(eachButton)
+                    layout.addWidget(btn)                
+                    btnList.append(btn)                
+        win.setLayout(layout)    
+        mainWin.setCentralWidget(win)
+        #mainWin.show()
+        return (mainWin,layout,btnList)
+    
     def html2Text(self, data):
         h = html2text.HTML2Text()
         return h.handle(data)
