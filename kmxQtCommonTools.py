@@ -46,7 +46,7 @@ class CommonTools(object):
     '''
     classdocs
     '''
-    def __init__(self, parentWindow, iconPath=':/fatcow/32x32/'):
+    def __init__(self, parentWindow=None, iconPath=':/fatcow/32x32/'):
         '''
         Constructor
         '''
@@ -55,23 +55,26 @@ class CommonTools(object):
         self.defaultIcon = "document_empty.png"
         self.ttls = kmxTools.Tools()
     
-    def createVerticalWindow(self, parent, buttons=['Button1','Button2','|','Button3']):
-        mainWin = QtWidgets.QMainWindow(parent)
-        win = QtWidgets.QWidget(mainWin)
-        layout = QtWidgets.QVBoxLayout(win)
+    def createVerticalWindow(self, parent, name='SystemDialog', buttons=['Button1','Button2','|','Button3']):
+        mainWin = QtWidgets.QDialog(parent)        
+        layout = QtWidgets.QVBoxLayout(mainWin)
+        
         btnList = []
-        if(len(buttons)>0):            
+        if(buttons and len(buttons)>0):            
             for eachButton in buttons:
                 if(eachButton=='|'):
                     layout.addStretch()
                 else:
-                    btn = QtWidgets.QPushButton(win)
+                    btn = QtWidgets.QPushButton(mainWin)
                     btn.setText(eachButton)
                     layout.addWidget(btn)                
                     btnList.append(btn)                
-        win.setLayout(layout)    
-        mainWin.setCentralWidget(win)
-        #mainWin.show()
+        mainWin.setLayout(layout)    
+        mainWin.setWindowTitle(name)
+
+        #self.win.setModal(1)
+        #self.win.exec_() 
+
         return (mainWin,layout,btnList)
     
     def html2Text(self, data):

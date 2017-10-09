@@ -58,20 +58,33 @@ import subprocess
 #Include below point in your main and errors will be displayed.
 #sys.excepthook = kmxTools.errorHandler
 
-def errorHandler(excType, excValue, tracebackobj):
+def errorHandler(etype, value, tb):
     """
     Global function to catch unhandled exceptions.
     
-    @param excType exception type
-    @param excValue exception value
-    @param tracebackobj traceback object
+    @param etype exception type
+    @param value exception value
+    @param tb traceback object
     """    
     
-    info = traceback.format_exc()
-    print(info)
+    info = ''
+    try:
+        info = traceback.format_exc()
+        print(info)
+    except:
+        print ('Traceback formatter failed! Custom formatted exception info')
+        print('--------')
+        print('')
+        info = traceback.format_exception(etype, value, tb)
+        disp = ''
+        for eachLine in info:
+            disp += eachLine
+        print(disp)
+        info = disp
+        print('--------')
     try:
         f = open('error.log', "w")
-        f.write(info)
+        f.write(str(info))
         f.close()
     except IOError:
         pass    
@@ -309,7 +322,7 @@ class Tools(object):
         f = open(file, "wb")
         pickle.dump(obj, f, pickle.HIGHEST_PROTOCOL)
         f.close()
-        self.info("Saved!" + className + "-" + file)
+        print("Saved!" + className + "-" + file)
 
     def pickleLoadObject(self, file):
         x = None

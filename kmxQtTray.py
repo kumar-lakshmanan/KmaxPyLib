@@ -19,20 +19,20 @@ class Tray(object):
     '''
     classdocs
     '''
-    def __init__(self, parentWidget, trayClickFn=None, trayItemClickFn=None):
+    def __init__(self, parentWidget, trayClickFn=None, trayItemClickFn=None, trayIcon=None):
         '''
         Constructor
         '''
         self.parent = parentWidget
         self.trayClickFn = trayClickFn
         self.trayItemClickFn = trayItemClickFn
+        self.trayIcon = trayIcon
         
         self.kmxMenuBuilder = kmxQtMenuBuilder.MenuBuilder()
         self.kmxQtTools = kmxQtCommonTools.CommonTools(None)
-        
-        
+                
     def setupTray(self):
-        self.tray = self.trayAgentReady()
+        self.tray = self.trayAgentReady(self.trayIcon)
         self.trayMenu = self.kmxMenuBuilder.createMenu(None, 'TrayMenu')
         self.tray.setContextMenu(self.trayMenu)
 
@@ -43,8 +43,8 @@ class Tray(object):
         if(self.trayItemClickFn):
             self.trayItemClickFn(itm)
         
-    def trayAgentReady(self):    
-        self.tray = QtWidgets.QSystemTrayIcon(self.kmxQtTools.getIcon('action_log.png'), self.parent)
+    def trayAgentReady(self, icon='roadworks.png'):    
+        self.tray = QtWidgets.QSystemTrayIcon(self.kmxQtTools.getIcon(icon), self.parent)
         self.tray.activated.connect(self.trayClicked)        
         self.tray.show()
         return self.tray
