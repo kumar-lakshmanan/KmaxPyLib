@@ -1,0 +1,24 @@
+		<title>Flow</title>
+		<link rel="stylesheet" type="text/css" href="/Flow/static/js/flowchart/jquery.flowchart.min.css">
+		<link rel="stylesheet" type="text/css" href="/Flow/static/js/flowchart/flowchart.css">
+		<link rel="stylesheet" type="text/css" href="/Flow/static/js/easyui/themes/kube.css">
+		<link rel="stylesheet" type="text/css" href="/Flow/static/js/easyui/themes/icon.css">
+		<link rel="stylesheet" type="text/css" href="/Flow/static/js/easyui/themes/default/easyui.css">
+
+ 		<script type="text/javascript" src="/Flow/static/js/flowchart/jquery-1.10.2.js"></script>
+ 		<script>console.log('Jquery 1.10 Requested');</script>
+
+		<script type="text/javascript" src="/Flow/static/js/flowchart/jquery.flowchart.js"></script>
+		<script>console.log('Flow Chart Requested');</script>
+
+		<script type="text/javascript" src="/Flow/static/js/flowchart/jquery.mousewheel.min.js"></script>
+		<script type="text/javascript" src="/Flow/static/js/flowchart/jquery.panzoom.min.js"></script>
+		<script type="text/javascript" src="/Flow/static/js/flowchart/jquery-ui.js"></script>
+		<script>console.log('Jquery UI Requested');</script>
+
+ 		<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
+ 		<script>console.log('Jquery 3.3 Requested');</script>
+
+		<script type="text/javascript" src="/Flow/static/js/easyui/jquery.easyui.min.js"></script>
+		<script>console.log('Easy UI Requested');</script>
+ 
