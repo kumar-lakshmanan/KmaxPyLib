@@ -240,7 +240,7 @@ class Tools(object):
         f.write(str(data))
         f.close()
 
-    def cleanFolder(folder):
+    def cleanFolder(self, folder):
         folder = os.path.abspath(folder)
         for filename in os.listdir(folder):
             file_path = os.path.join(folder, filename)
@@ -253,6 +253,8 @@ class Tools(object):
                 print('Failed to delete %s. Reason: %s' % (file_path, e))        
 
     def copyFile(self, src, dst):
+        src = os.path.abspath(src)
+        dst = os.path.abspath(dst)        
         shutil.copy(src, dst)
 
     def copyFolderSpl(self, src, dst):
@@ -261,33 +263,35 @@ class Tools(object):
         shutil.copytree(src, dst)
 
     def copyFolder(self, source_folder, destination_folder, latest_overwrite=1, forced_overwrite=0, verbose=1):
+        source_folder = os.path.abspath(source_folder)
+        destination_folder = os.path.abspath(destination_folder)
         for root, dirs, files in os.walk(source_folder):
             for item in files:
                 src_path = os.path.join(root, item)
-                dst_path = os.path.join(destination_folder, src_path.replace(source_folder, ""))
+                dst_path = os.path.join(destination_folder, os.path.basename(src_path))
                 if os.path.exists(dst_path):
                     if (not forced_overwrite and not latest_overwrite):
                         if(verbose):
-                            print("Already exist, Skipping...\n" + src_path + " to " + dst_path)
+                            print("Already exist, Skipping..." + src_path + " to " + dst_path)
                     if (not forced_overwrite and latest_overwrite):
                         if os.stat(src_path).st_mtime > os.stat(dst_path).st_mtime:
                             if(verbose):
-                                print("Overwriting latest...\n" + src_path + " to " + dst_path)
+                                print("Overwriting latest..." + src_path + " to " + dst_path)
                             shutil.copy2(src_path, dst_path)
                     if (forced_overwrite):
                         if(verbose):
-                            print("Overwriting...\n" + src_path + " to " + dst_path)
+                            print("Overwriting..." + src_path + " to " + dst_path)
                         shutil.copy2(src_path, dst_path)
                 else:
                     if(verbose):
-                        print("Copying...\n" + src_path + " to " + dst_path)
+                        print("Copying..." + src_path + " to " + dst_path)
                     shutil.copy2(src_path, dst_path)
             for item in dirs:
                 src_path = os.path.join(root, item)
                 dst_path = os.path.join(destination_folder, src_path.replace(source_folder, ""))
                 if not os.path.exists(dst_path):
                     if(verbose):
-                        print("Creating folder...\n" + dst_path)
+                        print("Creating folder..." + dst_path)
                     os.mkdir(dst_path)
         if(verbose):
             print("Copy process completed!")
@@ -307,15 +311,17 @@ class Tools(object):
         return path
 
     def makeEmptyFile(self, fileName):
+        fileName = os.path.abspath(fileName)
         self.makePathForFile(fileName)
         self.writeFileContent(fileName, '')
 
     def makePathForFile(self, file):
+        file = os.path.abspath(file)
         base = os.path.dirname(file)
         self.makePath(base)
 
     def makePath(self, path):
-        print(path)
+        path = os.path.abspath(path)
         if(not os.path.exists(path) and path != ''):
             os.makedirs(path)
         else:
