@@ -240,8 +240,25 @@ class Tools(object):
         f.write(str(data))
         f.close()
 
+    def cleanFolder(folder):
+        folder = os.path.abspath(folder)
+        for filename in os.listdir(folder):
+            file_path = os.path.join(folder, filename)
+            try:
+                if os.path.isfile(file_path) or os.path.islink(file_path):
+                    os.unlink(file_path)
+                elif os.path.isdir(file_path):
+                    shutil.rmtree(file_path)
+            except Exception as e:
+                print('Failed to delete %s. Reason: %s' % (file_path, e))        
+
     def copyFile(self, src, dst):
         shutil.copy(src, dst)
+
+    def copyFolderSpl(self, src, dst):
+        src = os.path.abspath(src)
+        dst = os.path.abspath(dst)
+        shutil.copytree(src, dst)
 
     def copyFolder(self, source_folder, destination_folder, latest_overwrite=1, forced_overwrite=0, verbose=1):
         for root, dirs, files in os.walk(source_folder):
